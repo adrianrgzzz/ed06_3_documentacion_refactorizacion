@@ -46,50 +46,13 @@ public class Main {
             scanner.nextLine();
             switch (opcion) {
                 case REGISTRAR_HABITACION:
-                    System.out.println("Introduce el tipo de habitación (SIMPLE, DOBLE, SUITE): ");
-                    tipo = scanner.nextLine();
-                    System.out.println("Introduce el precio base de la habitación: ");
-                    double precioBase = scanner.nextDouble();
-                    scanner.nextLine();
-                    hotel.registrarHabitacion(tipo, precioBase);
-                    System.out.println("Habitación registrada: " + tipo + " - Precio base: " + precioBase);
+                    registrarHabitacion(hotel);
                     break;
                 case LISTAR_HABITACIONES_DISPONIBLES:
                     hotel.listarHabitacionesDisponibles();
                     break;
                 case RESERVAR_HABITACION:
-                    System.out.println("Introduce el id del cliente: ");
-                    int clienteId = scanner.nextInt();
-                    System.out.println("Introduce el tipo de habitación (SIMPLE, DOBLE, SUITE): ");
-                    tipo = scanner.next();
-                    System.out.println("Introduce la fecha de entrada (año): ");
-                    int anioEntrada = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la fecha de entrada (mes): ");
-                    int mesEntrada = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la fecha de entrada (día): ");
-                    int diaEntrada = scanner.nextInt();
-                    scanner.nextLine();
-                    LocalDate fechaEntrada = LocalDate.of(anioEntrada, mesEntrada, diaEntrada);
-                    System.out.println("Introduce la fecha de salida (año): ");
-                    int anioSalida = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la fecha de salida (mes): ");
-                    int mesSalida = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la fecha de salida (día): ");
-                    int diaSalida = scanner.nextInt();
-                    scanner.nextLine();
-                    LocalDate fechaSalida = LocalDate.of(anioSalida, mesSalida, diaSalida);
-                    int numeroHabitacion = hotel.reservarHabitacion(clienteId, tipo, fechaEntrada,
-                        fechaSalida);
-                    System.out.println("Datos de la habitacion");
-                    Habitacion habitacion = hotel.getHabitacion(numeroHabitacion);
-                    System.out.println(
-                        "Habitación #" + habitacion.getNumero() + " - Tipo: " + habitacion.getTipo()
-                            + " - Precio base: " + habitacion.getPrecioBase());
-                    System.out.println("Número de habitación reservada: " + numeroHabitacion);
+                    reservarHabitacion(hotel);
                     break;
                 case LISTAR_RESERVAS:
                     hotel.listarReservas();
@@ -98,43 +61,7 @@ public class Main {
                     hotel.listarClientes();
                     break;
                 case REGISTRAR_CLIENTE:
-                    String nombre;
-                    String email;
-                    String dni;
-
-                    while(true) {
-                        try {
-                            System.out.println("Introduce el nombre del cliente: ");
-                            nombre = scanner.next();
-                            Cliente.validarNombre(nombre);
-                            break;
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Nombre no válido. Inténtalo de nuevo.");
-                        }
-                    }
-                    while (true) {
-                        try {
-                            System.out.println("Introduce el email del cliente: ");
-                            email = scanner.next();
-                            Cliente.validarEmail(email);
-                            break;
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Email no válido. Inténtalo de nuevo.");
-                        }
-                    }
-                    while (true) {
-                        try {
-                            System.out.println("Introduce el DNI del cliente: ");
-                            dni = scanner.next();
-                            Cliente.validarDni(dni);
-                            break;
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("DNI no válido. Inténtalo de nuevo.");
-                        }
-                    }
-                    System.out.println("¿Es VIP? (true/false): ");
-                    boolean esVip = scanner.nextBoolean();
-                    hotel.registrarCliente(nombre, email, dni, esVip);
+                    registrarCliente(hotel);
                     break;
                 case SALIR:
                     System.out.println("Saliendo del programa...");
@@ -145,6 +72,114 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private static void registrarCliente(Hotel hotel) {
+        String nombre;
+        String email;
+        String dni;
+
+        nombre = leerConValidacion();
+        email = emailValido();
+        dni = dniValido();
+        System.out.println("¿Es VIP? (true/false): ");
+        boolean esVip = scanner.nextBoolean();
+        hotel.registrarCliente(nombre, email, dni, esVip);
+
+    }
+
+    private static String dniValido() {
+        String dni;
+        while (true) {
+            try {
+                System.out.println("Introduce el DNI del cliente: ");
+                dni = scanner.next();
+                Cliente.validarDni(dni);
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("DNI no válido. Inténtalo de nuevo.");
+            }
+        }
+        return dni;
+    }
+
+    private static String emailValido() {
+        String email;
+        while (true) {
+            try {
+                System.out.println("Introduce el email del cliente: ");
+                email = scanner.next();
+                Cliente.validarEmail(email);
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Email no válido. Inténtalo de nuevo.");
+            }
+        }
+        return email;
+    }
+
+    private static String leerConValidacion() {
+        String nombre;
+        while(true) {
+            try {
+                System.out.println("Introduce el nombre del cliente: ");
+                nombre = scanner.next();
+                Cliente.validarNombre(nombre);
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Nombre no válido. Inténtalo de nuevo.");
+            }
+        }
+        return nombre;
+    }
+
+    private static void reservarHabitacion(Hotel hotel) {
+        String tipo;
+        System.out.println("Introduce el id del cliente: ");
+        int clienteId = scanner.nextInt();
+        System.out.println("Introduce el tipo de habitación (SIMPLE, DOBLE, SUITE): ");
+        tipo = scanner.next();
+        System.out.println("Introduce la fecha de entrada (año): ");
+        int anioEntrada = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Introduce la fecha de entrada (mes): ");
+        int mesEntrada = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Introduce la fecha de entrada (día): ");
+        int diaEntrada = scanner.nextInt();
+        scanner.nextLine();
+        LocalDate fechaEntrada = LocalDate.of(anioEntrada, mesEntrada, diaEntrada);
+        System.out.println("Introduce la fecha de salida (año): ");
+        int anioSalida = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Introduce la fecha de salida (mes): ");
+        int mesSalida = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Introduce la fecha de salida (día): ");
+        int diaSalida = scanner.nextInt();
+        scanner.nextLine();
+        LocalDate fechaSalida = LocalDate.of(anioSalida, mesSalida, diaSalida);
+        int numeroHabitacion = hotel.reservarHabitacion(clienteId, tipo, fechaEntrada,
+            fechaSalida);
+        System.out.println("Datos de la habitacion");
+        Habitacion habitacion = hotel.getHabitacion(numeroHabitacion);
+        System.out.println(
+            "Habitación #" + habitacion.getNumero() + " - Tipo: " + habitacion.getTipo()
+                + " - Precio base: " + habitacion.getPrecioBase());
+        System.out.println("Número de habitación reservada: " + numeroHabitacion);
+
+    }
+
+    private static void registrarHabitacion(Hotel hotel) {
+        String tipo;
+        System.out.println("Introduce el tipo de habitación (SIMPLE, DOBLE, SUITE): ");
+        tipo = scanner.nextLine();
+        System.out.println("Introduce el precio base de la habitación: ");
+        double precioBase = scanner.nextDouble();
+        scanner.nextLine();
+        hotel.registrarHabitacion(tipo, precioBase);
+        System.out.println("Habitación registrada: " + tipo + " - Precio base: " + precioBase);
+
     }
 
     private static void mostrarMenu() {
